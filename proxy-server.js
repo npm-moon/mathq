@@ -1,3 +1,5 @@
+// proxy-server.js (응답 구조를 answer로 되돌린 버전)
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
@@ -33,8 +35,9 @@ app.post('/gpt', async (req, res) => {
       timeout: 15000,
     });
 
-    // 응답 전체를 그대로 반환
-    res.json({ raw_openai_response: response.data });
+    // 응답에서 answer 키만 추출하여 반환
+    const answer = response.data.choices[0].message.content;
+    res.json({ answer });
   } catch (err) {
     console.error('[GPT Proxy Error]', err.message);
     res.status(500).json({ error: 'GPT 서버 요청 실패', message: err.message, stack: err.response?.data });
